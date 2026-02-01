@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minshad J Naisam | Cybersecurity Engineer</title>
+    <style>
+        /* --- 1. VARIABLES & RESET --- */
+        :root {
+            --bg-color: #02040a;
+            --card-bg: rgba(13, 22, 40, 0.7);
+            --card-border: rgba(0, 243, 255, 0.1);
+            --primary: #00f3ff; /* Electric Cyan */
+            --secondary: #00ff88; /* Neon Green */
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --glass-blur: blur(12px);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-mono: 'Courier New', monospace;
+            --font-sans: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- 2. BACKGROUND ANIMATION --- */
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #0a1124 0%, #02040a 100%);
+        }
+
+        /* --- 3. UTILITIES --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .section-padding { padding: 100px 0; }
+        
+        .section-header {
+            margin-bottom: 60px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, var(--primary), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--secondary);
+            box-shadow: 0 0 10px var(--secondary);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-family: var(--font-mono);
+            font-weight: bold;
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 0; height: 100%;
+            background: var(--primary);
+            z-index: -1;
+            transition: var(--transition);
+        }
+
+        .btn:hover { color: #000; box-shadow: 0 0 15px var(--primary); }
+        .btn:hover::before { width: 100%; }
+
+        /* --- 4. NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%;
+            background: rgba(2, 4, 10, 0.8);
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            font-family: var(--font-mono);
+        }
+
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
+        }
+        .nav-links a:hover { color: var(--primary); text-shadow: 0 0 8px var(--primary); }
+
+        /* --- 5. HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+        }
+
+        .hero-content { z-index: 2; max-width: 800px; }
+        
+        .hero-eyebrow {
+            color: var(--secondary);
+            font-family: var(--font-mono);
+            margin-bottom: 20px;
+            display: block;
+            font-size: 1.1rem;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .typewriter {
+            color: var(--primary);
+            border-right: 2px solid var(--primary);
+            white-space: nowrap;
+            overflow: hidden;
+            animation: blink 0.7s step-end infinite;
+        }
+
+        @keyframes blink { 50% { border-color: transparent; } }
+
+        /* --- 6. EXPERIENCE (TIMELINE) --- */
+        .timeline-container {
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            margin-left: 20px;
+            padding-left: 40px;
+        }
+
+        .exp-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 25px;
+            margin-bottom: 40px;
+            border-radius: 4px;
+            position: relative;
+            backdrop-filter: var(--glass-blur);
+            transition: var(--transition);
+        }
+
+        .exp-card:hover {
+            transform: translateX(10px);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+
+        .exp-card::before {
+            content: '';
+            position: absolute;
+            left: -49px;
+            top: 30px;
+            width: 16px;
+            height: 16px;
+            background: var(--bg-color);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .exp-role { font-size: 1.4rem; color: #fff; font-weight: 600; }
+        .exp-company { color: var(--primary); font-family: var(--font-mono); margin-bottom: 10px; display: block; }
+        .exp-desc li { color: var(--text-muted); list-style: none; margin-bottom: 8px; position: relative; padding-left: 20px; }
+        .exp-desc li::before { content: '>'; position: absolute; left: 0; color: var(--secondary); }
+
+        /* --- 7. PROJECTS (GRID) --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--secondary);
+            box-shadow: 0 10px 30px -10px rgba(0, 255, 136, 0.2);
+        }
+
+        .project-card h3 { font-size: 1.4rem; margin-bottom: 15px; color: #fff; }
+        .project-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
+        
+        .tags { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; }
+        .tag {
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            color: var(--primary);
+            background: rgba(0, 243, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        /* --- 8. SKILLS (HUD STYLE) --- */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .skill-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            text-align: center;
+            border-radius: 4px;
+            transition: var(--transition);
+            cursor: default;
+        }
+
+        .skill-item:hover {
+            border-color: var(--primary);
+            background: rgba(0, 243, 255, 0.05);
+            color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        /* --- 9. CONTACT & FOOTER --- */
+        .contact-box {
+            text-align: center;
+            background: linear-gradient(145deg, rgba(13,22,40,0.8), rgba(2,4,10,0.9));
+            padding: 60px;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .hero h2 { font-size: 1.5rem; }
+            .nav-links { display: none; }
+            .timeline-container { margin-left: 0; border-left: none; padding-left: 0; }
+            .exp-card::before { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas-bg"></canvas>
+
+    <nav>
+        <div class="logo">&lt;MJN /&gt;</div>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#experience">Experience</a>
+            <a href="#projects">Work</a>
+            <a href="#skills">Skills</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <section id="about" class="hero container">
+        <div class="hero-content">
+            <span class="hero-eyebrow">Hi, my name is</span>
+            <h1>Minshad J Naisam</h1>
+            <h2>I am a <span class="typewriter" id="typewriter-text"></span></h2>
+            <p style="color: var(--text-muted); max-width: 500px; margin: 20px 0 40px;">
+                Specializing in SOC Operations, Threat Intelligence, and Cloud Defense. [cite_start]I architect secure digital ecosystems and automate response workflows[cite: 4, 6].
+            </p>
+            <a href="#contact" class="btn">Initiate Connection</a>
+        </div>
+    </section>
+
+    <section id="experience" class="section-padding container">
+        <div class="section-header">
+            <h2>Mission Log</h2>
+        </div>
+        <div class="timeline-container">
+            <div class="exp-card">
+                <div class="exp-role">Software Engineer - Cybersecurity</div>
+                [cite_start]<span class="exp-company">NEST Digital STC [cite: 4]</span>
+                <span style="color: var(--secondary); font-size: 0.9rem; margin-bottom: 15px; display:block;">Jul 2025 - Present</span>
+                <ul class="exp-desc">
+                    [cite_start]<li>Analyze 5,000+ security events daily via log correlation & SIEM monitoring[cite: 7].</li>
+                    [cite_start]<li>Engineer SOAR automation workflows to reduce manual incident handling[cite: 8].</li>
+                    [cite_start]<li>Secure Azure workloads using Defender for Cloud & Entra ID (RBAC/IAM)[cite: 9, 10].</li>
+                    [cite_start]<li>Integrate DevSecOps checks into Jenkins CI/CD pipelines[cite: 11].</li>
+                </ul>
+            </div>
+
+            <div class="exp-card">
+                <div class="exp-role">Cyber Security Intern</div>
+                [cite_start]<span class="exp-company">Brainwave Matrix Solutions [cite: 15]</span>
+                <span style="color: var(--secondary); font-size: 0.9rem; margin-bottom: 15px; display:block;">Jun 2024 - Jul 2024</span>
+                <ul class="exp-desc">
+                    [cite_start]<li>Engineered a phishing link scanner with 30% higher detection accuracy[cite: 17].</li>
+                    [cite_start]<li>Developed a password strength testing tool to mitigate weak credentials[cite: 18].</li>
+                    [cite_start]<li>Executed penetration tests on 5+ domains with actionable remediation reports[cite: 19].</li>
+                </ul>
+            </div>
+
+            <div class="exp-card">
+                <div class="exp-role">Ethical Hacking Intern</div>
+                [cite_start]<span class="exp-company">TechByHeart [cite: 20]</span>
+                <span style="color: var(--secondary); font-size: 0.9rem; margin-bottom: 15px; display:block;">Sep 2023 - Oct 2023</span>
+                <ul class="exp-desc">
+                    [cite_start]<li>Optimized threat detection by 20% through Splunk log analysis[cite: 24].</li>
+                    [cite_start]<li>Conducted network evaluations using Nmap, Wireshark, and Metasploit[cite: 25].</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section-padding container">
+        <div class="section-header">
+            <h2>Deployed Protocols</h2>
+        </div>
+        <div class="grid">
+            <div class="project-card">
+                <h3>VAPT Reporting Protocol</h3>
+                [cite_start]<p>Comprehensive security assessment framework identifying critical vulnerabilities across multiple web domains[cite: 31, 33].</p>
+                <div class="tags">
+                    <span class="tag">OWASP</span>
+                    <span class="tag">PenTesting</span>
+                    <span class="tag">Reporting</span>
+                </div>
+            </div>
+            <div class="project-card">
+                <h3>Secure Ubuntu WordPress</h3>
+                [cite_start]<p>Hardened WordPress deployment on Ubuntu Server featuring real-time log monitoring for intrusion detection[cite: 34, 37].</p>
+                <div class="tags">
+                    <span class="tag">Linux Hardening</span>
+                    <span class="tag">Log Monitoring</span>
+                </div>
+            </div>
+            <div class="project-card">
+                <h3>HOMETOR Network Monitor</h3>
+                [cite_start]<p>Application for monitoring home WiFi networks, featuring device discovery and automated security alerts[cite: 38, 40].</p>
+                <div class="tags">
+                    <span class="tag">Network Security</span>
+                    <span class="tag">Python</span>
+                </div>
+            </div>
+            <div class="project-card">
+                <h3>IMEI TRACEX</h3>
+                [cite_start]<p>Digital forensics tool for tracking mobile devices via IMEI to assist in dispute resolution and investigations[cite: 42, 44].</p>
+                <div class="tags">
+                    <span class="tag">Forensics</span>
+                    <span class="tag">Tracking</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="section-padding container">
+        <div class="section-header">
+            <h2>Arsenal</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px;">
+            <div>
+                [cite_start]<h3 style="color: #fff; margin-bottom: 20px;">Tech Stack [cite: 47]</h3>
+                <div class="skills-grid">
+                    <div class="skill-item">Splunk</div>
+                    <div class="skill-item">Azure Sentinel</div>
+                    <div class="skill-item">Wazuh</div>
+                    <div class="skill-item">Wireshark</div>
+                    <div class="skill-item">Burp Suite</div>
+                    <div class="skill-item">Docker</div>
+                    <div class="skill-item">Python</div>
+                    <div class="skill-item">SQL</div>
+                    <div class="skill-item">Nessus</div>
+                    <div class="skill-item">Jenkins</div>
+                </div>
+            </div>
+            <div>
+                [cite_start]<h3 style="color: #fff; margin-bottom: 20px;">Certifications [cite: 50]</h3>
+                <div class="exp-card" style="padding: 20px;">
+                    <ul class="exp-desc" style="margin: 0;">
+                        <li style="color: var(--primary);">Certified Ethical Hacker (CEH)</li>
+                        <li>Certified SOC Analyst (CSA)</li>
+                        <li>Certified IT Infrastructure & Cyber SOC Analyst</li>
+                        <li>Intro to Splunk</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section-padding container">
+        <div class="contact-box">
+            <h2 style="color: #fff; font-size: 2.5rem; margin-bottom: 20px;">Secure Link Required?</h2>
+            <p style="color: var(--text-muted); margin-bottom: 40px;">
+                Currently available for advanced security roles. Ping me for collaboration.
+            </p>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+                <a href="mailto:minshad554@gmail.com" class="btn">Send Encrypted Email</a>
+                <a href="https://linkedin.com/minshad-j-naisam" target="_blank" class="btn">LinkedIn Protocol</a>
+                <a href="https://github.com/Minshadj" target="_blank" class="btn">GitHub Repo</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>System Status: ONLINE | &copy; 2026 Minshad J Naisam</p>
+    </footer>
+
+    <script>
+        // --- TYPEWRITER EFFECT ---
+        const textElement = document.getElementById('typewriter-text');
+        const phrases = ['Cybersecurity Engineer', 'SOC Analyst', 'Cloud Security Specialist', 'Penetration Tester'];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function type() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                typeSpeed = 2000; // Pause at end
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                typeSpeed = 500;
+            }
+
+            setTimeout(type, typeSpeed);
+        }
+        document.addEventListener('DOMContentLoaded', type);
+
+        // --- BACKGROUND PARTICLES ---
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particlesArray;
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() * 0.5) - 0.25;
+                this.speedY = (Math.random() * 0.5) - 0.25;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(0, 243, 255, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+                // Draw connections
+                for (let j = i; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 243, 255, ${0.1 - distance/1000})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        });
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
